@@ -49,11 +49,10 @@ class Solver(private val io: IOHandler) {
     private fun rDoubles() = rStrs().map { it.toDouble() }.toMutableList()
     private fun pr(out: Any) = io.print(out)
     private fun prln(out: Any) = io.println(out)
+    val url = "https://atcoder.jp/contests/tessoku-book/tasks/tessoku_book_bz"
 
     fun solve() {
-        val a = rInt()
-        val (b, c) = rInts()
-        val s = rStr()
-        prln("${a + b + c} $s")
+        val (a, b) = rInts()
+        pr(a + b)
     }
 }

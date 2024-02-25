@@ -6,8 +6,7 @@ import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
 class MainTest {
-    private val url = "https://atcoder.jp/contests/abs/tasks/practice_1"
-    private val atcoder = AtCoder(url)
+    private val atcoder = AtCoder(Solver(TestIO()).url)
 
     @Test
     fun main() {
@@ -31,7 +30,7 @@ class MainTest {
         }
 
         // 提出
-//        atcoder.submit("src/main/kotlin/Main.kt")
-//        println("\n提出完了 ✅\n")
+        atcoder.submit("src/main/kotlin/Main.kt")
+        println("\n提出完了 ✅\n")
     }
 }

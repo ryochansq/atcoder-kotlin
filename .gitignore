@@ -40,3 +40,6 @@ bin/
 
 ### Env ###
 .env
+
+### Main ###
+src/main/kotlin/Main.kt
