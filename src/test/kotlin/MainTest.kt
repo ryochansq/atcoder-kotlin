@@ -14,18 +14,17 @@ class MainTest {
         val questions = atcoder.getQuestions()
 
         // テスト
-        println()
         assertSoftly {
             questions.size shouldBeGreaterThan 0
             questions.forEachIndexed { index, question ->
                 val testIO = TestIO()
                 testIO.setInput(question.input)
                 Solver(testIO).solve()
-                val expected = question.answer
                 val actual = testIO.getOutput()
-                val result = if (expected == actual) "✅" else "❌"
+                val expected = question.answer
+                val result = if (actual == expected) "✅" else "❌"
                 println("Test${index + 1}: $result")
-                expected shouldBe actual
+                actual shouldBe expected
             }
         }
 

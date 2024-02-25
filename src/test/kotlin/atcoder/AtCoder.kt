@@ -88,7 +88,7 @@ class AtCoder(private val url: String) {
                 return true
             } catch (_: Exception) {
                 count--
-                Thread.sleep(500)
+                Thread.sleep(1000)
             }
         }
         return null
