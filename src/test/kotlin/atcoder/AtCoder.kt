@@ -18,7 +18,7 @@ class AtCoder(private val url: String) {
         retry(::login) ?: throw Exception("ログイン失敗")
         val doc = session.url(url).get()
         val inputs = doc.select("h3:containsOwn(入力例) ~ pre").map { it.text() }
-        val answers = doc.select("h3:containsOwn(出力例) ~ pre").map { it.text() }
+        val answers = doc.select("h3:containsOwn(出力例) ~ pre").map { it.text().replace("\r\n", "\n") }
         if (inputs.size != answers.size) throw Exception("入力例と出力例の数が違う")
         return inputs.mapIndexed { index, input ->
             Question(
