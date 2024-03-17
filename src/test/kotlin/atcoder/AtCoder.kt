@@ -14,6 +14,10 @@ class AtCoder(private val url: String) {
     private val env = dotenv()
     private val session = Jsoup.newSession()
 
+    init {
+        if (url == "") throw Exception("URL未入力")
+    }
+
     fun getQuestions(): List<Question> {
         retry(::login) ?: throw Exception("ログイン失敗")
         val doc = session.url(url).get()
@@ -53,6 +57,7 @@ class AtCoder(private val url: String) {
         } ?: throw Exception("提出失敗")
     }
 
+    @Suppress("DEPRECATION")
     private fun getCsrfToken(url: String): String {
         session.url(url).get()
         val token = Regex("(?<=csrf_token%3A).*(?=%00)")
