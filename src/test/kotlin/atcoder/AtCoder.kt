@@ -19,7 +19,12 @@ class AtCoder(private val url: String) {
     }
 
     fun getQuestions(): List<Question> {
-        retry(::login) ?: throw Exception("ログイン失敗")
+        try {
+            withRetry { login() }
+        } catch (e: Exception) {
+            println("ログイン失敗")
+            throw Exception(e)
+        }
         val doc = session.url(url).get()
         val inputs = doc.select("h3:containsOwn(入力例) ~ pre").map { it.text() }
         val answers = doc.select("h3:containsOwn(出力例) ~ pre").map { it.text().replace("\r\n", "\n") }
@@ -33,28 +38,38 @@ class AtCoder(private val url: String) {
     }
 
     fun submit(codePath: String) {
-        retry(::login) ?: throw Exception("ログイン失敗")
+        try {
+            withRetry { login() }
+        } catch (e: Exception) {
+            println("ログイン失敗")
+            throw Exception(e)
+        }
         val contestUrl = Regex("^.*(?=/tasks)").find(url)?.value ?: throw Exception("contestUrl取得失敗")
         val taskScreenName = Regex("(?<=tasks/).*$").find(url)?.value ?: throw Exception("taskScreenName取得失敗")
         val submitUrl = "$contestUrl/submit"
         val kotlinId = "5004"
         val sourceCode = File(codePath).readText()
 
-        retry {
-            val csrfToken = getCsrfToken(submitUrl)
-            session
-                .url(submitUrl)
-                .data(
-                    mapOf(
-                        "data.LanguageId" to kotlinId,
-                        "data.TaskScreenName" to taskScreenName,
-                        "csrf_token" to csrfToken,
-                        "sourceCode" to sourceCode
+        try {
+            withRetry {
+                val csrfToken = getCsrfToken(submitUrl)
+                session
+                    .url(submitUrl)
+                    .data(
+                        mapOf(
+                            "data.LanguageId" to kotlinId,
+                            "data.TaskScreenName" to taskScreenName,
+                            "csrf_token" to csrfToken,
+                            "sourceCode" to sourceCode
+                        )
                     )
-                )
-                .followRedirects(true)
-                .post()
-        } ?: throw Exception("提出失敗")
+                    .followRedirects(true)
+                    .post()
+            }
+        } catch (e: Exception) {
+            println("提出失敗")
+            throw Exception(e)
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -85,17 +100,15 @@ class AtCoder(private val url: String) {
             .post()
     }
 
-    private fun retry(func: () -> Any): Boolean? {
-        var count = 7
-        while (count > 0) {
+    private fun withRetry(count: Int = 7, func: () -> Any) {
+        for (i in count downTo 0) {
             try {
                 func()
-                return true
-            } catch (_: Exception) {
-                count--
+                return
+            } catch (e: Exception) {
+                if (count == 0) throw Exception(e)
                 Thread.sleep(1000)
             }
         }
-        return null
     }
 }
